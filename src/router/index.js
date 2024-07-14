@@ -1,15 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import ECommerceView from '@/views/Dashboard/ECommerceView.vue'
+import SigninView from '@/views/Authentication/SigninView.vue'
+import SignUpView from '@/views/Authentication/SignUpView.vue'
 
 // Definición de las rutas disponibles en la aplicación
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'Inicio',
     component: ECommerceView,
     meta: {
-      title: 'Home'
+      title: 'Inicio'
+    }
+  },
+  {
+    path: '/login',
+    name: 'Iniciar sesión',
+    component: SigninView,
+    meta: {
+      title: 'Iniciar sesión'
+    }
+  },
+  {
+    path: '/registro',
+    name: 'Registrar',
+    component: SignUpView,
+    meta: {
+      title: 'Registrar'
     }
   }
 ]
@@ -28,7 +46,7 @@ const router = createRouter({
 // Función ejecutada antes de cada cambio de ruta
 router.beforeEach((to, from, next) => {
   // Actualiza el título del documento según la meta información de la ruta actual
-  document.title = `${to.meta.title} | Template Personalizado`
+  document.title = `${to.meta.title} | Booksio`
   next()
 })
 
