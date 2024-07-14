@@ -1,5 +1,7 @@
 <script setup>
 import { onClickOutside } from '@vueuse/core'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
 const target = ref(null)
@@ -8,6 +10,14 @@ const dropdownOpen = ref(false)
 onClickOutside(target, () => {
   dropdownOpen.value = false
 })
+
+const router = useRouter()
+const authStore = useAuthStore()
+// Cierra sesión empleando el store y navega hacia la página de login
+const handleLogout = () => {
+  const isLogout = authStore.logout()
+  if (isLogout) router.push('/login')
+}
 </script>
 
 <template>
@@ -50,6 +60,7 @@ onClickOutside(target, () => {
       class="absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
     >
       <button
+        @click="handleLogout"
         class="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
       >
         <svg
