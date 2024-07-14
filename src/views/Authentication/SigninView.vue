@@ -56,7 +56,7 @@ import InputGroup from '@/components/Auths/InputGroup.vue'
         <div class="mt-6 text-center">
           <p class="font-medium">
             ¿No tienes una cuenta?
-            <router-link to="/auth/signup" class="text-primary">Registrate</router-link>
+            <router-link to="/registro" class="text-primary">Registrate</router-link>
           </p>
         </div>
       </form>
