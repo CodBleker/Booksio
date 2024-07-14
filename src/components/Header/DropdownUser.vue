@@ -2,7 +2,7 @@
 import { onClickOutside } from '@vueuse/core'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const target = ref(null)
 const dropdownOpen = ref(false)
@@ -14,10 +14,21 @@ onClickOutside(target, () => {
 const router = useRouter()
 const authStore = useAuthStore()
 // Cierra sesión empleando el store y navega hacia la página de login
-const handleLogout = () => {
+const handleLogout = async () => {
   const isLogout = authStore.logout()
   if (isLogout) router.push('/login')
 }
+
+let perfil = ref('')
+onMounted(async () => {
+  // Verifica si el usuario está autenticado al montar el componente
+  const isAuthenticated = await authStore.isAuthenticated()
+  if (isAuthenticated) {
+    perfil.value = authStore.dataUserInfo.data
+  } else {
+    handleLogout()
+  }
+})
 </script>
 
 <template>
@@ -28,8 +39,10 @@ const handleLogout = () => {
       @click.prevent="dropdownOpen = !dropdownOpen"
     >
       <span class="hidden text-right lg:block">
-        <span class="block text-sm font-medium text-black dark:text-white">Harvey Specter</span>
-        <span class="block text-xs font-medium">Abogado</span>
+        <span class="block text-sm font-medium text-black dark:text-white">{{
+          perfil.username ?? ''
+        }}</span>
+        <span class="block text-xs font-medium">{{ perfil.email ?? '' }}</span>
       </span>
 
       <span class="h-12 w-12 rounded-full">
