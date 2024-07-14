@@ -9,7 +9,6 @@ export const postIniciarSesion = async (formState, fieldsToValidate, dataBody) =
     if (emptyFields.length > 0) throw new Error(`Campos vacíos en: ${emptyFields.join(', ')}`)
     /* Fin Validación de los campos */
 
-    // Realizar la solicitud POST a la API
     const response = await fetch('https://bookstore.mgi.pe/api/auth/login', {
       method: 'POST',
       headers: {
