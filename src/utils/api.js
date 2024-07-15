@@ -117,3 +117,205 @@ export const postDatosPerfil = async (token) => {
     return false
   }
 }
+
+export const getListadoLibros = async () => {
+  try {
+    const response = await fetch('https://bookstore.mgi.pe/api/books', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    // Manejar la respuesta del servidor
+    await handleErrorResponse(response, '')
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    // Capturar y manejar errores
+    Swal.fire({
+      title: 'Ooops! Ocurrió un error',
+      html: 'Por favor, inténtalo de nuevo.',
+      footer: `Error: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3C50E0'
+    })
+  }
+}
+
+export const getLibro = async (isbn) => {
+  try {
+    const response = await fetch(`https://bookstore.mgi.pe/api/books/${isbn}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    // Manejar la respuesta del servidor
+    await handleErrorResponse(response, '')
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    // Capturar y manejar errores
+    Swal.fire({
+      title: 'Ooops! Ocurrió un error',
+      html: 'Por favor, inténtalo de nuevo.',
+      footer: `Error: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3C50E0'
+    })
+  }
+}
+
+export const postRegistrarLibro = async (
+  formState,
+  resetForm,
+  fieldsToValidate,
+  dataBody,
+  navigate
+) => {
+  try {
+    /* Validación de los campos */
+    const emptyFields = handleValidateFields(formState, fieldsToValidate)
+    if (emptyFields.length > 0) throw new Error(`Campos vacíos en: ${emptyFields.join(', ')}`)
+    /* Fin Validación de los campos */
+
+    // Realizar la solicitud POST a la API
+    const response = await fetch('https://bookstore.mgi.pe/api/books', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dataBody)
+    })
+
+    // Manejar la respuesta del servidor
+    await handleErrorResponse(response, '')
+
+    // Mostrar mensaje de éxito utilizando SweetAlert
+    Swal.fire({
+      title: 'Registro exitoso!',
+      text: 'Se ha registrado correctamente',
+      icon: 'success',
+      confirmButtonText: 'Regresar a la lista de libros',
+      allowOutsideClick: false,
+      allowEnterKey: false,
+      allowEscapeKey: false,
+      confirmButtonColor: '#3C50E0'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        resetForm()
+        navigate()
+      }
+    })
+  } catch (error) {
+    // Capturar y manejar errores
+    Swal.fire({
+      title: 'Ooops! Ocurrió un error',
+      html: 'Por favor, inténtalo de nuevo más tarde.',
+      footer: `Error: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3C50E0'
+    })
+  }
+}
+
+export const postAgregarLibroAColeccion = async (token, idLibro, handleLogout) => {
+  try {
+    // Realizar la solicitud POST a la API
+    const response = await fetch(`https://bookstore.mgi.pe/api/collections/${idLibro}/add-item`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    // Manejar la respuesta del servidor
+    await handleErrorResponse(response, handleLogout)
+
+    // Mostrar mensaje de éxito utilizando SweetAlert
+    Swal.fire({
+      title: 'Registro exitoso!',
+      text: 'Se ha registrado a tu colección correctamente',
+      icon: 'success',
+      confirmButtonText: 'Listo',
+      allowOutsideClick: false,
+      allowEnterKey: false,
+      allowEscapeKey: false,
+      confirmButtonColor: '#3C50E0'
+    })
+  } catch (error) {
+    // Capturar y manejar errores
+    Swal.fire({
+      title: 'Ooops! Ocurrió un error',
+      html: 'Por favor, inténtalo de nuevo más tarde.',
+      footer: `Error: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3C50E0'
+    })
+  }
+}
+
+export const postRegistrarColeccion = async (
+  token,
+  formState,
+  resetForm,
+  fieldsToValidate,
+  dataBody,
+  navigate
+) => {
+  try {
+    /* Validación de los campos */
+    const emptyFields = handleValidateFields(formState, fieldsToValidate)
+    if (emptyFields.length > 0) throw new Error(`Campos vacíos en: ${emptyFields.join(', ')}`)
+    /* Fin Validación de los campos */
+
+    // Realizar la solicitud POST a la API
+    const response = await fetch(`https://bookstore.mgi.pe/api/collections`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(dataBody)
+    })
+
+    // Manejar la respuesta del servidor
+    await handleErrorResponse(response, '')
+
+    // Mostrar mensaje de éxito utilizando SweetAlert
+    Swal.fire({
+      title: 'Registro exitoso!',
+      text: 'Se ha registrado tu nueva colección correctamente',
+      icon: 'success',
+      confirmButtonText: 'Ir a lista de colecciones',
+      allowOutsideClick: false,
+      allowEnterKey: false,
+      allowEscapeKey: false,
+      confirmButtonColor: '#3C50E0'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        resetForm()
+        navigate()
+      }
+    })
+  } catch (error) {
+    // Capturar y manejar errores
+    Swal.fire({
+      title: 'Ooops! Ocurrió un error',
+      html: 'Por favor, inténtalo de nuevo más tarde.',
+      footer: `Error: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3C50E0'
+    })
+  }
+}
