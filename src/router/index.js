@@ -1,15 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ECommerceView from '@/views/Dashboard/ECommerceView.vue'
+import ListadoLibros from '@/views/Pages/ListadoLibros.vue'
 import SigninView from '@/views/Authentication/SigninView.vue'
 import SignUpView from '@/views/Authentication/SignUpView.vue'
+import RegistrarLibro from '../views/Pages/RegistrarLibro.vue'
+import RegistrarColeccion from '../views/Pages/RegistrarColeccion.vue'
+import ListadoColecciones from '../views/Pages/ListadoColecciones.vue'
+import Favoritos from '../views/Pages/Favoritos.vue'
 
 // Definición de las rutas disponibles en la aplicación
 const routes = [
   {
     path: '/',
     name: 'Inicio',
-    component: ECommerceView,
+    component: ListadoLibros,
     meta: {
       title: 'Inicio'
     }
@@ -23,11 +27,35 @@ const routes = [
     }
   },
   {
-    path: '/registro',
-    name: 'Registrar',
-    component: SignUpView,
+    path: '/libros/registrar',
+    name: 'Registrar Libro',
+    component: RegistrarLibro,
     meta: {
-      title: 'Registrar'
+      title: 'Registrar Libro'
+    }
+  },
+  {
+    path: '/colecciones',
+    name: 'Lista de colecciones',
+    component: ListadoColecciones,
+    meta: {
+      title: 'Lista de colecciones'
+    }
+  },
+  {
+    path: '/colecciones/registrar',
+    name: 'Registrar nueva Colección',
+    component: RegistrarColeccion,
+    meta: {
+      title: 'Registrar nueva Colección'
+    }
+  },
+  {
+    path: '/favoritos',
+    name: 'Mis Favoritos',
+    component: Favoritos,
+    meta: {
+      title: 'Mis Favoritos'
     }
   }
 ]

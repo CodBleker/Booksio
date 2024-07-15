@@ -52,12 +52,8 @@ const sidebarStore = useSidebarStore()
           </span>
         </button>
         <!-- Hamburger Toggle BTN -->
-        <router-link class="block flex-shrink-0 lg:hidden" to="/">
-          <img src="@/assets/images/logo/logo.png" alt="Logo" />
-        </router-link>
       </div>
-      <div class="hidden sm:block">
-      </div>
+      <div class="hidden sm:block"></div>
 
       <div class="flex items-center gap-3 2xsm:gap-7">
         <ul class="flex items-center gap-2 2xsm:gap-4">

@@ -11,26 +11,18 @@ import {
   useVueTable,
   createColumnHelper
 } from '@tanstack/vue-table'
-import { getLibro, getListadoColecciones, getListadoLibros } from '../../utils/api'
+import { getColeccion, getListadoColecciones } from '../../utils/api'
 import { useFormStore } from '@/stores/useFormStore'
-import Swal from 'sweetalert2'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
 
-const router = useRouter()
-const authStore = useAuthStore()
-// Cierra sesión empleando el store y navega hacia la página de login
-const handleLogout = async () => {
-  const isLogout = authStore.logout()
-  if (isLogout) router.push('/login')
-}
+const pageTitle = ref('Lista de Colecciones')
 
-const pageTitle = ref('Catálogo de Libros')
+const authStore = useAuthStore()
 
 const defaultData = ref([])
 const handleListado = async () => {
-  const listaLibros = await getListadoLibros()
-  defaultData.value = listaLibros.data
+  const listadoColecciones = await getListadoColecciones(authStore.token)
+  defaultData.value = listadoColecciones.data
 }
 // Fetch data when the component is mounted
 onMounted(() => {
@@ -49,68 +41,8 @@ const columns = [
       }
     }
   }),
-  columnHelper.accessor('isbn', {
-    header: 'ISBN',
-    size: 70,
-    minSize: 70,
-    meta: {
-      style: {
-        textAlign: 'end'
-      }
-    }
-  }),
-  columnHelper.accessor('cover', {
-    header: 'Portada',
-    size: 70,
-    minSize: 70,
-    meta: {
-      style: {
-        textAlign: 'end'
-      }
-    }
-  }),
-  columnHelper.accessor('title', {
-    header: 'Título',
-    size: 70,
-    minSize: 70,
-    meta: {
-      style: {
-        textAlign: 'end'
-      }
-    }
-  }),
-  columnHelper.accessor('author', {
-    header: 'Autor',
-    size: 70,
-    minSize: 70,
-    meta: {
-      style: {
-        textAlign: 'end'
-      }
-    }
-  }),
-  columnHelper.accessor('category', {
-    header: 'Categoria',
-    size: 70,
-    minSize: 70,
-    meta: {
-      style: {
-        textAlign: 'end'
-      }
-    }
-  }),
-  columnHelper.accessor('price', {
-    header: 'Precio',
-    size: 70,
-    minSize: 70,
-    meta: {
-      style: {
-        textAlign: 'end'
-      }
-    }
-  }),
-  columnHelper.accessor('url', {
-    header: 'Enlace',
+  columnHelper.accessor('name', {
+    header: 'Nombre',
     size: 70,
     minSize: 70,
     meta: {
@@ -152,13 +84,11 @@ const table = useVueTable({
   initialState: {
     columnVisibility: {
       // Esconde las columnas
-      _id: false,
-      cover: false,
-      url: false
+      _id: true
     }
   },
   getCoreRowModel: getCoreRowModel(),
-  getSortedRowModel: getSortedRowModel(), //falta
+  getSortedRowModel: getSortedRowModel(),
   getPaginationRowModel: getPaginationRowModel()
 })
 
@@ -168,97 +98,22 @@ function handleGoToPage(e) {
   table.setPageIndex(page)
 }
 
-// FILTRADO POR ISBN
+// FILTRADO POR ID COLECCIÓN
 const formStore = useFormStore() // Store de manipulación de estados de formulario
 const { formState } = formStore
 
 // Inicializamos los campos para evitar que se inicialicen valores de otras páginas que comparten los mismos campos
-formState.isbn = ''
+formState.id = ''
 // Función para manejar el envio de los datos del formulario
 const handleSubmit = async () => {
-  if (formState.isbn == '') {
-    const listaLibros = await getListadoLibros()
-    defaultData.value = listaLibros.data
+  if (formState.id == '') {
+    const listadoColecciones = await getListadoColecciones(authStore.token)
+    defaultData.value = listadoColecciones.data
     return
   }
 
-  const result = await getLibro(formState.isbn)
+  const result = await getColeccion(authStore.token, formState.id)
   defaultData.value = [result.data]
-}
-
-// Agregar coleccion
-const handleAgregarFavoritos = async (idLibro) => {
-  const listadoSuperiores = await getListadoColecciones(authStore.token)
-  const opcionesListaEmpresaHTML = listadoSuperiores.data
-    ?.map(
-      (option) => `
-          <option value="${option._id}" class="text-body dark:text-bodydark">
-            ${option.name}
-          </option>
-        `
-    )
-    .join('')
-
-  Swal.fire({
-    title: 'Asignar en una colección',
-    html: `
-          <form class="px-2">
-            <div class="flex flex-col sm:flex-row items-center justify-between">
-              <label for="coleccion" class="font-bold text-left">Lista de Colecciones</label>
-              <select id="coleccion" class="swal2-select w-10">
-              <option selected value='' disabled>Elegir</option>
-                ${opcionesListaEmpresaHTML}
-              </select>
-            </div>
-          </form>`,
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar',
-    confirmButtonText: 'Asignar Colección',
-    confirmButtonColor: '#46589d',
-    showLoaderOnConfirm: true,
-    preConfirm: async () => {
-      const coleccionSelected = Swal.getPopup().querySelector('#coleccion').value
-      const dataBody = {
-        bookId: idLibro
-      }
-
-      try {
-        const response = await fetch(
-          `https://bookstore.mgi.pe/api/collections/${coleccionSelected}/add-item`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-type': 'application/json',
-              Authorization: `Bearer ${authStore.token}`
-            },
-            body: JSON.stringify(dataBody)
-          }
-        )
-        const res = await response.json()
-        if (res.status == 'success') {
-          Swal.fire({
-            title: 'Libro agregado a la colección',
-            text: res.message,
-            icon: 'success',
-            confirmButtonColor: '#46589d'
-          })
-        } else {
-          Swal.fire({
-            title: 'No se pudo realizar la solicitud',
-            text: res.message,
-            icon: 'error',
-            confirmButtonColor: '#46589d'
-          })
-          return
-        }
-      } catch (error) {
-        Swal.showValidationMessage(`
-            Request failed: ${error}
-          `)
-      }
-    },
-    allowOutsideClick: () => !Swal.isLoading()
-  })
 }
 </script>
 
@@ -278,11 +133,11 @@ const handleAgregarFavoritos = async (idLibro) => {
             className="w-full flex items-center justify-center gap-4 flex-wrap lg:items-end xl:flex-nowrap lg:justify-start"
           >
             <InputGroup
-              label="ISBN"
-              name="isbn"
-              id="isbn"
-              type="isbn"
-              placeholder="Ingresa el ISBN"
+              label="ID Colección"
+              name="id"
+              id="id"
+              type="text"
+              placeholder="Ingresa el ID Colección"
               extraclass="w-full rounded border-[1.5px] h-12 border-stroke bg-transparent px-5 py-3 font-normal outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
             >
               <svg
@@ -332,9 +187,6 @@ const handleAgregarFavoritos = async (idLibro) => {
                     :props="header.getContext()"
                   />
                 </th>
-                <th className="py-4 px-4 font-bold text-black dark:text-white text-center">
-                  Acciones
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -345,25 +197,6 @@ const handleAgregarFavoritos = async (idLibro) => {
                   className="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center"
                 >
                   <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-                </td>
-                <td className="text-center border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <div className="flex items-center justify-center gap-4">
-                    <button
-                      title="Agregar a favoritos"
-                      className="button--icon"
-                      @click="handleAgregarFavoritos(row.original._id)"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 576 512"
-                        class="w-8 fill-red"
-                      >
-                        <path
-                          d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9l2.6-2.4C267.2 438.6 256 404.6 256 368c0-97.2 78.8-176 176-176c28.3 0 55 6.7 78.7 18.5c.9-6.5 1.3-13 1.3-19.6v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5zM432 512a144 144 0 1 0 0-288 144 144 0 1 0 0 288zm16-208v48h48c8.8 0 16 7.2 16 16s-7.2 16-16 16H448v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V384H368c-8.8 0-16-7.2-16-16s7.2-16 16-16h48V304c0-8.8 7.2-16 16-16s16 7.2 16 16z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
                 </td>
               </tr>
             </tbody>

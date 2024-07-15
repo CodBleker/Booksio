@@ -319,3 +319,87 @@ export const postRegistrarColeccion = async (
     })
   }
 }
+
+export const getListadoColecciones = async (token) => {
+  try {
+    const response = await fetch('https://bookstore.mgi.pe/api/collections', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    // Manejar la respuesta del servidor
+    await handleErrorResponse(response, '')
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    // Capturar y manejar errores
+    Swal.fire({
+      title: 'Ooops! Ocurrió un error',
+      html: 'Por favor, inténtalo de nuevo.',
+      footer: `Error: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3C50E0'
+    })
+  }
+}
+
+export const getColeccion = async (token, idColeccion) => {
+  try {
+    const response = await fetch(`https://bookstore.mgi.pe/api/collections/${idColeccion}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    // Manejar la respuesta del servidor
+    await handleErrorResponse(response, '')
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    // Capturar y manejar errores
+    Swal.fire({
+      title: 'Ooops! Ocurrió un error',
+      html: 'Por favor, inténtalo de nuevo.',
+      footer: `Error: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3C50E0'
+    })
+  }
+}
+
+export const getListadoLibrosXColeccion = async (token, idColeccion) => {
+  try {
+    const response = await fetch(`https://bookstore.mgi.pe/api/collections/${idColeccion}/items`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    // Manejar la respuesta del servidor
+    await handleErrorResponse(response, '')
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    // Capturar y manejar errores
+    Swal.fire({
+      title: 'Ooops! Ocurrió un error',
+      html: 'Por favor, inténtalo de nuevo.',
+      footer: `Error: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3C50E0'
+    })
+  }
+}
