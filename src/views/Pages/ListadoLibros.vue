@@ -14,17 +14,10 @@ import {
 import { getLibro, getListadoColecciones, getListadoLibros } from '../../utils/api'
 import { useFormStore } from '@/stores/useFormStore'
 import Swal from 'sweetalert2'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
+import dayjs from 'dayjs'
 
-const router = useRouter()
 const authStore = useAuthStore()
-// Cierra sesión empleando el store y navega hacia la página de login
-const handleLogout = async () => {
-  const isLogout = authStore.logout()
-  if (isLogout) router.push('/login')
-}
-
 const pageTitle = ref('Catálogo de Libros')
 
 const defaultData = ref([])
@@ -123,16 +116,19 @@ const columns = [
     header: 'Fecha Registro',
     size: 70,
     minSize: 70,
+    cell: (info) => dayjs(info.getValue()).format('DD/MM/YYYY hh:mm:ss'),
     meta: {
       style: {
         textAlign: 'end'
       }
     }
   }),
+
   columnHelper.accessor('updatedAt', {
     header: 'Fecha Actualizado',
     size: 70,
     minSize: 70,
+    cell: (info) => dayjs(info.getValue()).format('DD/MM/YYYY hh:mm:ss'),
     meta: {
       style: {
         textAlign: 'end'

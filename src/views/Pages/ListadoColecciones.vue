@@ -14,6 +14,7 @@ import {
 import { getColeccion, getListadoColecciones } from '../../utils/api'
 import { useFormStore } from '@/stores/useFormStore'
 import { useAuthStore } from '@/stores/useAuthStore'
+import dayjs from 'dayjs'
 
 const pageTitle = ref('Lista de Colecciones')
 
@@ -55,6 +56,7 @@ const columns = [
     header: 'Fecha Registro',
     size: 70,
     minSize: 70,
+    cell: (info) => dayjs(info.getValue()).format('DD/MM/YYYY hh:mm:ss'),
     meta: {
       style: {
         textAlign: 'end'
@@ -65,6 +67,7 @@ const columns = [
     header: 'Fecha Actualizado',
     size: 70,
     minSize: 70,
+    cell: (info) => dayjs(info.getValue()).format('DD/MM/YYYY hh:mm:ss'),
     meta: {
       style: {
         textAlign: 'end'

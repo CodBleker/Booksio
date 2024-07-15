@@ -28,7 +28,7 @@ const handleSubmit = async () => {
     isbn: formState.isbn,
     cover: formState.cover,
     title: formState.title,
-    price: formState.price,
+    price: precioLibro.value,
     author: formState.author,
     category: formState.category,
     url: formState.url
