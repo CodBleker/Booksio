@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, h } from 'vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import BreadcrumbDefault from '@/components/Breadcrumbs/BreadcrumbDefault.vue'
 import {
@@ -48,6 +48,16 @@ const columns = [
     header: 'Portada',
     size: 70,
     minSize: 70,
+    cell: (props) => {
+      const value = props.getValue()
+      return h('div', { class: 'text-center w-full flex items-center justify-center' }, [
+        h('img', {
+          class: 'w-12',
+          src: value,
+          alt: value || 'Portada'
+        })
+      ])
+    },
     meta: {
       style: {
         textAlign: 'end'
@@ -108,7 +118,6 @@ const table = useVueTable({
     columnVisibility: {
       // Esconde las columnas
       _id: false,
-      cover: false,
       url: false
     }
   },
@@ -191,6 +200,9 @@ const selectedCollection = ref('')
                     :props="header.getContext()"
                   />
                 </th>
+                <th className="py-4 px-4 font-bold text-black dark:text-white text-center">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -201,6 +213,28 @@ const selectedCollection = ref('')
                   className="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center"
                 >
                   <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                </td>
+
+                <td className="text-center border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                  <div className="flex items-center justify-center gap-4">
+                    <a
+                      :href="`${row.original.url}`"
+                      title="Agregar a favoritos"
+                      class="button--icon"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 576 512"
+                        class="fill-primary w-8"
+                      >
+                        <path
+                          d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"
+                        />
+                      </svg>
+                    </a>
+                  </div>
                 </td>
               </tr>
             </tbody>

@@ -13,28 +13,9 @@ onClickOutside(target, () => {
 const notificationItems = ref([
   {
     route: '#',
-    title: 'Edit your information in a swipe',
-    details:
-      'Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.',
-    time: '12 May, 2025'
-  },
-  {
-    route: '#',
-    title: 'It is a long established fact',
-    details: 'that a reader will be distracted by the readable.',
-    time: '24 Feb, 2025'
-  },
-  {
-    route: '#',
-    title: 'There are many variations',
-    details: 'of passages of Lorem Ipsum available, but the majority have suffered',
-    time: '04 Jan, 2025'
-  },
-  {
-    route: '#',
-    title: 'There are many variations',
-    details: 'of passages of Lorem Ipsum available, but the majority have suffered',
-    time: '01 Dec, 2024'
+    title: 'Tu tienda de libros Online',
+    details: 'Disfruta de una gran lista de libros y sumergete en grandes historias',
+    time: '14 Julio, 2024'
   }
 ])
 </script>

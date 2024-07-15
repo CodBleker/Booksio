@@ -19,6 +19,14 @@ const routes = [
     }
   },
   {
+    path: '/registro',
+    name: 'Registrar',
+    component: SignUpView,
+    meta: {
+      title: 'Registrar'
+    }
+  },
+  {
     path: '/login',
     name: 'Iniciar sesión',
     component: SigninView,
